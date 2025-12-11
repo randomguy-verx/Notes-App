@@ -1,2 +1,8 @@
 # Notes-App
 A minimal notes app made using Jetpack Compose and Root Library
+
+To run the app, open the project in Android Studio, let Gradle sync, then use “Run” to install on an emulator or device; the main screen shows a list of notes stored in a Room database, with a floating action button to add new notes via a dialog. Notes are represented by a Room `Entity` and accessed through a `Dao`, with a `ViewModel` exposing a `StateFlow<List<Note>>` to the Jetpack Compose UI so data survives configuration changes and app restarts.
+
+Room integration is handled by `NoteEntity`, `NoteDao`, and `NotesDatabase`, plus `NotesViewModel` and `NotesViewModelFactory` that wire the DAO into the UI layer; to extend the schema, add fields to `NoteEntity`, update the DAO queries, and bump the Room database version with a migration if needed.  Searching can be added by introducing a `searchNotes(query: String)` method in `NoteDao` using a `LIKE` query, exposing it from the `ViewModel`, and wiring a `TextField` in the UI that updates the query state and recomposes the list.
+
+Delete is currently supported through the `ViewModel.deleteNote()` function, which calls `dao.delete()` and automatically updates the UI via the `Flow` stream; to extend this, you can add swipe‑to‑delete in the list or a confirmation dialog before removal.  Other extensions include editing existing notes (add an `@Update` method in the DAO and reuse the add‑note dialog for editing) and sorting notes by timestamp or title using additional `ORDER BY` clauses in DAO queries.
